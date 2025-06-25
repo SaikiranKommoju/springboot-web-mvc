@@ -1,4 +1,4 @@
-package com.vsks.controllers;
+package com.vsks.controller;
 
 import com.vsks.dao.UserDAO;
 import com.vsks.dto.User;
@@ -6,7 +6,6 @@ import com.vsks.service.UserService;
 import com.vsks.vo.ResponseVO;
 import com.vsks.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;

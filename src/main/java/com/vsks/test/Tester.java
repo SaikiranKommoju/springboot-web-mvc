@@ -1,21 +1,14 @@
 package com.vsks.test;
 
-import com.vsks.dto.Department;
-import com.vsks.dto.Employee;
-import com.vsks.vo.EmployeeVO;
-import org.springframework.beans.BeanUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 public class Tester {
 
-    private static final List<Department> departments = new ArrayList<>();
+    public static void main(String[] args) {
+        for (int i = 0;true;i++) {
+            Integer i2 = i;
+        }
+    }
+
+    /*private static final List<Department> departments = new ArrayList<>();
     private static final Map<String, Department> deptCodeDeptMap = new ConcurrentHashMap<>();
     private static final List<Employee> employees = new ArrayList<>();
 
@@ -50,17 +43,17 @@ public class Tester {
 
         mapEmpToDept();
 
-        /*System.out.println(departments);
-        System.out.println(employees);*/
+        *//*System.out.println(departments);
+        System.out.println(employees);*//*
     }
 
     public static void main(String[] args) {
-        /*Department department = deptCodeDeptMap.get("BA");
+        *//*Department department = deptCodeDeptMap.get("BA");
         DepartmentVO departmentVO = new DepartmentVO();
         BeanUtils.copyProperties(department, departmentVO);
         System.out.println(department + ", " + departmentVO);
         System.out.println(department.hashCode() + ", " + departmentVO.hashCode());
-        System.out.println(department.getEmployeeList().hashCode() + ", " + departmentVO.getEmployeeList().hashCode());*/
+        System.out.println(department.getEmployeeList().hashCode() + ", " + departmentVO.getEmployeeList().hashCode());*//*
 
         Employee employee = employees.get(3);
         EmployeeVO employeeVO = new EmployeeVO();
@@ -80,6 +73,6 @@ public class Tester {
         for (Map.Entry<String, List<Employee>> entry : deptCodeEmpMap.entrySet()) {
             deptCodeDeptMap.get(entry.getKey()).getEmployeeList().addAll(entry.getValue());
         }
-    }
+    }*/
 
 }

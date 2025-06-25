@@ -3,6 +3,7 @@ package com.vsks.security.filter;
 import com.vsks.security.principal.UserPrincipal;
 import com.vsks.security.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,13 +23,14 @@ import java.util.stream.Collectors;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenUtil jwtUtil;
+    private JwtTokenUtil jwtTokenUtil;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private FilterChain filterChain;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String uri = request.getRequestURI();
         System.out.println("Filtering the URI " + request.getRequestURI());
         this.request = request;
         this.response = response;
@@ -39,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
         String token = getAccessToken(request);
-        if (!jwtUtil.validateAccessToken(token)) {
+        if (!jwtTokenUtil.validateAccessToken(token)) {
             System.out.println("Request header contains authorization token, but it is not validated");
             filterChain.doFilter(request, response);
             return;
@@ -73,7 +75,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private UserPrincipal getUserPrincipal(String token) {
         UserPrincipal userPrincipal = new UserPrincipal();
-        String jwtSubject = jwtUtil.getSubject(token);
+        String jwtSubject = jwtTokenUtil.getSubject(token);
         userPrincipal.setUsername(jwtSubject.split("\\|")[0]);
         String roles = jwtSubject.split("\\|")[1];
         userPrincipal.setAuthorities(Arrays.stream(roles.split(",")).collect(Collectors.toList()).stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));

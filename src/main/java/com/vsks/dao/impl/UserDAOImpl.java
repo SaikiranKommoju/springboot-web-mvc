@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public class UserDAOImpl implements UserDAO {
 
-    @Autowired
+    //@Autowired
     private DBConnection dbConnection;
 
     private static final List<User> ALL_USERS;

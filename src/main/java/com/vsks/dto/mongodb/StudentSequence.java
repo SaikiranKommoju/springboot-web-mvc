@@ -1,0 +1,17 @@
+package com.vsks.dto.mongodb;
+
+import lombok.Data;
+import lombok.ToString;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.persistence.Id;
+
+@Data
+@ToString
+@Document(collection = "Student_Sequence")
+public class StudentSequence {
+
+    @Id
+    private String id;
+    private long seq;
+}

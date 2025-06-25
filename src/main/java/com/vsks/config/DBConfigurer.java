@@ -4,16 +4,17 @@ import com.vsks.db.DBConnection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-@Configuration
+//@Configuration
 @PropertySource({"db-config-${profile}.properties"})
 public class DBConfigurer {
 
     @Value("${url}")
     private String url;
 
-    @Value("${usrname}")
-    private String username;
+    @Value("${usrname:defaultuser}")
+    private String username = "fixeduser";
 
     @Value("${password}")
     private String password;

@@ -1,4 +1,4 @@
-package com.vsks.controllers;
+package com.vsks.controller;
 
 import com.vsks.dao.UserDAO;
 import com.vsks.dto.User;
@@ -13,6 +13,10 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/user/api/v1")
 public class UserController {
+
+    public UserController() {
+        System.out.println("UserController :: no-param cons");
+    }
 
     @Autowired
     private UserService userService;
