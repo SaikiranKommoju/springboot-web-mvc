@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class A {
@@ -15,8 +15,7 @@ public class A {
 
     private B b;
 
-    public A(@Lazy
-                 B b) {
+    public A(@Lazy B b) {
         System.out.println("A :: A = " + this);
         //System.out.println("A :: B = " + b); // throws BeanCurrentlyInCreationException if un-commented because we tried to use B as soon as A is created
         this.b = b;

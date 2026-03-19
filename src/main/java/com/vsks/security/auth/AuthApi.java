@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.vsks.security.principal.UserPrincipal;
 import com.vsks.security.util.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,12 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthApi {
 
     @Autowired
+    @Lazy
     AuthenticationManager authManager;
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 
-    @RequestMapping(value = "/auth/login", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/auth/login", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
         System.out.println("Authenticating the user with e-Mail ID " + authRequest.getEmailId() + " & password " + authRequest.getPassword());
         try {
@@ -33,8 +35,8 @@ public class AuthApi {
             System.out.println("Access Token: " + accessToken);
             AuthResponse authResponse = new AuthResponse(userPrincipal.getUsername(), accessToken);
             return ResponseEntity.ok().body(authResponse);
-        } catch (BadCredentialsException ex) {
-            ex.printStackTrace();
+        } catch (BadCredentialsException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (Exception e) {
             e.printStackTrace();

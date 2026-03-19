@@ -12,5 +12,4 @@ public interface UserDAO {
     Optional<User> findUser(String emailId, String password);
 
     Optional<User> findUserByEmailId(String emailId);
-
 }

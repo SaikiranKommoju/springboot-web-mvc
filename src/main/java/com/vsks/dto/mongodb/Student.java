@@ -3,7 +3,7 @@ package com.vsks.dto.mongodb;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 
 @Data
 @NoArgsConstructor

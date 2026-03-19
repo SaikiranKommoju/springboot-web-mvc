@@ -27,7 +27,7 @@ public class EmployeeServiceImpl2 implements EmployeeService2 {
             if (null == responseEntity.getBody()) {
                 return "No response";
             } else {
-                return "Status is " + responseEntity.getStatusCode().value() + ":" + responseEntity.getStatusCode().name();
+                return "Status is " + responseEntity.getStatusCode().value() + ":" + responseEntity.getStatusCode();
             }
         }
         if (null != responseEntity.getBody().getData()) {

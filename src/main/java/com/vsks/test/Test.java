@@ -28,6 +28,6 @@ public class Test {
         List<String> empList2 = empList.stream()
                 .filter(p1.and(p2))
                 .map(Employee::getName)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

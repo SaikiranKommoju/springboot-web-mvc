@@ -1,16 +1,14 @@
 package com.vsks.security.service;
 
 import com.vsks.dao.UserDAO;
-import com.vsks.dto.User;
 import com.vsks.security.principal.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class LocalUserDetailsService implements UserDetailsService {
@@ -19,6 +17,7 @@ public class LocalUserDetailsService implements UserDetailsService {
     private UserDAO userDAO;
 
     @Autowired
+    @Lazy
     private PasswordEncoder passwordEncoder;
 
     @Override
