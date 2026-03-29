@@ -1,6 +1,6 @@
 package com.vsks.controller;
 
-import com.vsks.dto.mongodb.Student;
+import com.vsks.domain.mongodb.Student;
 import com.vsks.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

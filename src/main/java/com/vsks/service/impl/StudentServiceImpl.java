@@ -1,12 +1,10 @@
 package com.vsks.service.impl;
 
-import com.vsks.dto.mongodb.StudentSequence;
-import com.vsks.dto.mongodb.Student;
+import com.vsks.domain.mongodb.Student;
 import com.vsks.repo.mongodb.StudentRepository;
 import com.vsks.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 

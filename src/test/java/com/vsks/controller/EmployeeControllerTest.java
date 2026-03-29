@@ -1,8 +1,8 @@
 package com.vsks.controller;
 
 import com.vsks.config.ApplicationTestConfig;
-import com.vsks.dto.Employee;
-import com.vsks.repo.EmployeeRepo;
+import com.vsks.domain.Employee;
+import com.vsks.repo.EmployeeRepository;
 import com.vsks.service.impl.EmployeeServiceImpl;
 import com.vsks.utils.TestUtils;
 import org.hamcrest.CoreMatchers;
@@ -33,7 +33,7 @@ public class EmployeeControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockitoBean
-    EmployeeRepo employeeRepo;
+    EmployeeRepository employeeRepository;
 
     @Configuration
     @Import({ApplicationTestConfig.class, EmployeeController.class, EmployeeServiceImpl.class})
@@ -50,7 +50,7 @@ public class EmployeeControllerTest {
         e.setRole("Developer");
         e.setLocation("Hyderabad");
 
-        Mockito.when(employeeRepo.findById(any())).thenReturn(Optional.of(e));
+        Mockito.when(employeeRepository.findById(any())).thenReturn(Optional.of(e));
 
         mockMvc.perform(get("/employee/{id}", 1L))
                 .andExpect(status().isOk())
@@ -71,9 +71,9 @@ public class EmployeeControllerTest {
         BeanUtils.copyProperties(e, e2);
         e2.setId(1L);
 
-        System.out.println("EmployeeControllerTest :: employeeRepo: " + employeeRepo.hashCode());
+        System.out.println("EmployeeControllerTest :: employeeRepo: " + employeeRepository.hashCode());
 
-        Mockito.when(employeeRepo.save(any())).thenReturn(e2);
+        Mockito.when(employeeRepository.save(any())).thenReturn(e2);
 
         mockMvc.perform(post("/employee")
                         .content(TestUtils.asJsonString(e))

@@ -1,6 +1,6 @@
 package com.vsks.listener;
 
-import com.vsks.dto.mongodb.Student;
+import com.vsks.domain.mongodb.Student;
 import com.vsks.service.StudentSequenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventListener;

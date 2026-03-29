@@ -1,6 +1,6 @@
 package com.vsks.service;
 
-import com.vsks.dto.mongodb.Student;
+import com.vsks.domain.mongodb.Student;
 
 import java.util.List;
 import java.util.Map;

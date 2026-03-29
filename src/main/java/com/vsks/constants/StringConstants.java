@@ -10,4 +10,6 @@ public class StringConstants {
     public static final String SEQUENCE_FIELD = "seq";
     public static final String STUDENT_SEQUENCE = "student_sequence";
 
+    public static final String JWT_TOKEN_COOKIE_NAME = "JWT_TOKEN";
+
 }

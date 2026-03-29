@@ -1,20 +1,20 @@
 package com.vsks.security.service;
 
-import com.vsks.dao.UserDAO;
-import com.vsks.security.principal.UserPrincipal;
+import com.vsks.repo.UserRepository;
+import com.vsks.security.principal.LocalUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class LocalUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserDAO userDAO;
+    private UserRepository userRepository;
 
     @Autowired
     @Lazy
@@ -22,10 +22,9 @@ public class LocalUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String emailId) throws UsernameNotFoundException {
-        System.out.println("Loading user by username "  + emailId + " from User repo");
-        UserPrincipal userPrincipal = userDAO.findUserByEmailId(emailId)
-                .map(UserPrincipal::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User with e-Mail ID " + emailId + " is not found at us"));
+        LocalUserDetails userPrincipal = userRepository.findUserByEmailId(emailId)
+                .map(LocalUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email Id " + emailId));
         System.out.println("User Principal: " + userPrincipal);
         //userPrincipal.setPassword(encodePassword(userPrincipal.getPassword()));
         return userPrincipal;

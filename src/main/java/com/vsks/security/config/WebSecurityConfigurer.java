@@ -1,19 +1,21 @@
 package com.vsks.security.config;
 
-import com.vsks.security.filter.JwtTokenFilter;
-import com.vsks.security.service.LocalUserDetailsService;
+import com.vsks.security.filter.JwtTokenValidateFilter;
+import com.vsks.security.filter.LocalAuthenticationFilter;
+import com.vsks.security.handler.LocalAuthenticationFailureHandler;
+import com.vsks.security.handler.LocalAuthenticationSuccessHandler;
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -21,6 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfigurer {
+
+    private static final String[] PERMITTED_PATHS = {"/loginPage", "/login", "/logout", "/token", "/wish", "/css/**", "/js/**", "/images/**"};
 
     static class NoPasswordEncoder implements PasswordEncoder {
         @Override
@@ -35,10 +39,7 @@ public class WebSecurityConfigurer {
     }
 
     @Autowired
-    private LocalUserDetailsService localUserDetailsService;
-
-    @Autowired
-    private JwtTokenFilter jwtTokenFilter;
+    private JwtTokenValidateFilter jwtTokenValidateFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,42 +50,51 @@ public class WebSecurityConfigurer {
 
     @Bean
     @SuppressWarnings("deprecation")
-    public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
-        System.out.println("Creating Authentication Provider");
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(localUserDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
-        return authProvider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
         System.out.println("Creating Authentication Manager");
-        return config.getAuthenticationManager();
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(authenticationProvider);
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationProvider authenticationProvider) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity,
+                                                   AuthenticationManager authenticationManager,
+                                                   LocalAuthenticationSuccessHandler localAuthenticationSuccessHandler,
+                                                   LocalAuthenticationFailureHandler localAuthenticationFailureHandler) throws Exception {
         System.out.println("Configuring security over HTTP requests");
 
-        httpSecurity
+        LocalAuthenticationFilter localAuthenticationFilter = new LocalAuthenticationFilter();
+        localAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        localAuthenticationFilter.setAuthenticationSuccessHandler(localAuthenticationSuccessHandler);
+        localAuthenticationFilter.setAuthenticationFailureHandler(localAuthenticationFailureHandler);
+        localAuthenticationFilter.setFilterProcessesUrl("/login");
+
+        return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // To tell to Spring Security to not create sessions to make it Stateful which is not in a concept of JWT
-                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)) // Allow sessions for login form, but use JWT for API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
-                        //.requestMatchers("/user/api/v1/**").permitAll()
-                        .requestMatchers("/user/api/v1/**").hasRole("DEV")
-                        .requestMatchers("/user/api/v1/consumeServiceA").hasAnyRole("UI", "DB")
-                        .requestMatchers("/user/api/v1/consumeServiceB").hasRole("DBA")
+                        // Permit forwarded JSP rendering and error dispatches to avoid login page redirect loops.
+                        // Spring Security 6 enables authorization for internal redirects (like JSP, CSS, JS files etc.) also
+                        // Hence allows them go through Security Filter chain
+                        // Below call will stop them
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                        .requestMatchers(PERMITTED_PATHS).permitAll()
+                        .requestMatchers("/employee/*").hasAnyAuthority("READ", "WRITE", "DELETE")
+                        .requestMatchers("/employee").hasAnyAuthority("WRITE", "DELETE")
                         .anyRequest().authenticated()
+                ).formLogin(form -> form
+                                .loginPage("/loginPage")
+                                .loginProcessingUrl("/login")
                 )
-                .formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class); // To tell to Spring Security to call this filter before UsernamePasswordAuthenticationFilter
-
-        return httpSecurity.build();
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/loginPage")
+                        .invalidateHttpSession(true)
+                )
+                .addFilterAt(localAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtTokenValidateFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
-
 }

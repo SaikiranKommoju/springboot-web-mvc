@@ -1,13 +1,12 @@
 package com.vsks.test;
 
-import com.vsks.dto.Employee;
+import com.vsks.domain.Employee;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class Test {
 

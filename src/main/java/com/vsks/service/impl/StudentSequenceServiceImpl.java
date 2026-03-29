@@ -1,6 +1,6 @@
 package com.vsks.service.impl;
 
-import com.vsks.dto.mongodb.StudentSequence;
+import com.vsks.domain.mongodb.StudentSequence;
 import com.vsks.service.StudentSequenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;

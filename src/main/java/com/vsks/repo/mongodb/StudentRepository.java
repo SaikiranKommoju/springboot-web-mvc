@@ -1,6 +1,6 @@
 package com.vsks.repo.mongodb;
 
-import com.vsks.dto.mongodb.Student;
+import com.vsks.domain.mongodb.Student;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,11 +1,13 @@
 package com.vsks.service;
 
-import com.vsks.dto.Employee;
+import com.vsks.domain.Employee;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface EmployeeService {
+
+    List<Employee> getEmployees();
 
     Employee findEmployeeById(Long id);
 

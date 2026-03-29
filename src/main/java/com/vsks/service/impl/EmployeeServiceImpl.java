@@ -1,13 +1,14 @@
 package com.vsks.service.impl;
 
-import com.vsks.dto.Employee;
-import com.vsks.repo.EmployeeRepo;
+import com.vsks.domain.Employee;
+import com.vsks.repo.EmployeeRepository;
 import com.vsks.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,14 +16,19 @@ import java.util.Optional;
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
-    EmployeeRepo employeeRepo;
+    EmployeeRepository employeeRepository;
+
+    @Override
+    public List<Employee> getEmployees() {
+        return employeeRepository.findAll();
+    }
 
     @Override
     public Employee findEmployeeById(Long id) {
         /*if (id > 0) {
             throw new EmployeeDatabaseException("Employee database is down");
         }*/
-        return employeeRepo.findById(id).orElse(null);
+        return employeeRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -33,14 +39,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee updateEmployee(Long id, Employee employee) {
-        Optional<Employee> optionalEmp = employeeRepo.findById(id);
+        Optional<Employee> optionalEmp = employeeRepository.findById(id);
         optionalEmp.ifPresent(it -> employee.setId(it.getId()));
         return optionalEmp.orElse(null);
     }
 
     @Override
     public Employee updateEmployee(Long id, Map<String, Object> fieldValueMap) {
-        Optional<Employee> optionalEmployee = employeeRepo.findById(id);
+        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
         if (optionalEmployee.isPresent()) {
             Employee emp = optionalEmployee.get();
             fieldValueMap.forEach((k, v) -> {
@@ -50,7 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                     ReflectionUtils.setField(field, emp, v);
                 }
             });
-            return employeeRepo.save(emp);
+            return employeeRepository.save(emp);
         }
         return null;
     }
