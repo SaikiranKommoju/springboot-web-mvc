@@ -6,17 +6,30 @@ import java.util.List;
 public class StringPathChanger {
 
     public String changeDirectoryString(String currentDirectory, String command) {
-        // Check if command starts with "cd"
+        // Check if command starts with "cd" as a keyword (not just prefix)
         if (!command.startsWith("cd")) {
             throw new IllegalStateException("Command must start with 'cd'");
+        }
+
+        // Validate that "cd" is a complete keyword (followed by space, /, or end of string)
+        if (command.length() > 2) {
+            char charAfterCd = command.charAt(2);
+            if (charAfterCd != ' ' && charAfterCd != '/') {
+                throw new IllegalStateException("Command must start with 'cd'");
+            }
         }
 
         // Extract the path after "cd"
         String path = command.substring(2).trim();
 
-        // Handle "cd/" - navigate to root
-        if (path.isEmpty() || path.equals("/")) {
+        // Handle "cd /" - navigate to root
+        if (path.equals("/")) {
             return "/";
+        }
+
+        // Handle "cd" with no path - stay in current directory
+        if (path.isEmpty()) {
+            return currentDirectory;
         }
 
         // Remove trailing slashes from the path argument
